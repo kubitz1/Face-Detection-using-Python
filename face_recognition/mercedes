@@ -1,0 +1,81 @@
+import cv2 #
+
+def numara_fete(imagine_path):
+    # Incarca imaginea folosind OpenCV
+    imagine = cv2.imread(imagine_path)
+
+    # Verifica daca imaginea a fost incarcata corect
+    if imagine is None:
+        print(f'Eroare la incarcarea imaginii de la calea: {imagine_path}')
+        return
+
+    # Converteste imaginea la scala de gri (pentru eficienta)
+    imagine_gri = cv2.cvtColor(imagine, cv2.COLOR_BGR2GRAY)
+
+    # Incarca clasificatorul preantrenat pentru recunoasterea fetei
+    clasificator_fata = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+    # Verifica daca clasificatorul a fost incarcat corect
+    if clasificator_fata.empty():
+        print('Eroare la incarcarea clasificatorului pentru recunoasterea fetei.')
+        return
+
+    # Detecteaza fetele in imagine
+    fete = clasificator_fata.detectMultiScale(imagine_gri, scaleFactor=1.1, minNeighbors=5)
+
+    # Numara fetele
+    numar_fete = len(fete)
+
+    # Afiseaza rezultatul
+    print(f'Numarul de fete detectate: {numar_fete}')
+
+    # Deseneaza un dreptunghi in jurul fiecarei fete detectate
+    for (x, y, w, h) in fete:
+        cv2.rectangle(imagine, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    # Afiseaza imaginea cu dreptunghiurile desenate
+    cv2.imshow('Fete detectate', imagine)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+# Exemplu de utilizare
+imagine_path = 'imagine3.jpg'
+numara_fete(imagine_path)
+
+import dlib
+from imutils import face_utils
+
+
+def numara_fete(imagine_path):
+    imagine = cv2.imread(imagine_path)
+
+    if imagine is None:
+        print(f'Eroare la incarcarea imaginii de la calea: {imagine_path}')
+        return
+
+    imagine_gri = cv2.cvtColor(imagine, cv2.COLOR_BGR2GRAY)
+
+    # Utilizează detectorul dlib pentru a găsi fețele în imagine
+    detector = dlib.get_frontal_face_detector()
+    fete = detector(imagine_gri)
+
+    # Numărul de fețe detectate
+    numar_fete = len(fete)
+    print(f'Numarul de fete detectate: {numar_fete}')
+
+    # Desenează un dreptunghi în jurul fiecărei fețe detectate
+    for fata in fete:
+        (x, y, w, h) = face_utils.rect_to_bb(fata)
+        cv2.rectangle(imagine, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    # Afisează imaginea cu dreptunghiurile desenate
+    cv2.imshow('Fete detectate', imagine)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+# Exemplu de utilizare
+imagine_path = 'imagine.jpg'
+numara_fete(imagine_path)
+
+
